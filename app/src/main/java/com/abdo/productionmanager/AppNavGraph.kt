@@ -1,21 +1,28 @@
 package com.abdo.productionmanager
 
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abdo.feature.production.ProductionEntryScreen
 import com.abdo.feature.production.ProductionHistoryScreen
 import com.abdo.feature.production.ProductsManagerScreen
-import com.abdo.feature.tasks.TasksScreen
 import com.abdo.feature.tasks.AddTaskScreen
+import com.abdo.feature.tasks.TasksScreen
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
+fun AppNavGraph(
+    navController: NavHostController,
+    paddingValues: PaddingValues
+) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Dashboard.route
+        startDestination = Screen.Dashboard.route,
+        modifier = Modifier.padding(paddingValues)
     ) {
         composable(Screen.Dashboard.route) {
             DashboardScreen(
