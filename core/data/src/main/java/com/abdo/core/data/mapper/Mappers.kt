@@ -39,3 +39,29 @@ fun ProductionEntry.toEntity() = ProductionEntryEntity(
     date = date,
     notes = notes
 )
+
+// Task
+import com.abdo.core.data.entity.TaskEntity
+import com.abdo.core.domain.model.Task
+import com.abdo.core.domain.model.TaskPriority
+import com.abdo.core.domain.model.TaskStatus
+
+fun TaskEntity.toDomain() = Task(
+    id = id,
+    title = title,
+    description = description,
+    priority = TaskPriority.valueOf(priority),
+    status = TaskStatus.valueOf(status),
+    dueDate = dueDate,
+    createdAt = createdAt
+)
+
+fun Task.toEntity() = TaskEntity(
+    id = id,
+    title = title,
+    description = description,
+    priority = priority.name,
+    status = status.name,
+    dueDate = dueDate,
+    createdAt = createdAt
+)

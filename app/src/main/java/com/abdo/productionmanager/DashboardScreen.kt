@@ -26,23 +26,18 @@ fun DashboardScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-
         Text(
             text = "مدير الإنتاج",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
-
         Text(
             text = "اختر ما تريد فعله",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.outline
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        // أزرار التنقل
         DashboardButton(
             text = "تسجيل الإنتاج",
             icon = Icons.Default.Add,
@@ -59,10 +54,9 @@ fun DashboardScreen(
             onClick = onNavigateToProducts
         )
         DashboardButton(
-            text = "المهام — قريباً",
+            text = "المهام",
             icon = Icons.Default.Task,
-            onClick = onNavigateToTasks,
-            enabled = false
+            onClick = onNavigateToTasks
         )
         DashboardButton(
             text = "المالية — قريباً",

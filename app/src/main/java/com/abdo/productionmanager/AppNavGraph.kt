@@ -1,13 +1,15 @@
 package com.abdo.productionmanager
 
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.abdo.feature.production.ProductionEntryScreen
 import com.abdo.feature.production.ProductionHistoryScreen
 import com.abdo.feature.production.ProductsManagerScreen
-import androidx.compose.material3.Text
+import com.abdo.feature.tasks.TasksScreen
+import com.abdo.feature.tasks.AddTaskScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -50,10 +52,15 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
         composable(Screen.Tasks.route) {
-            Text("المهام — قريباً")
+            TasksScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToAddTask = { navController.navigate(Screen.AddTask.route) }
+            )
         }
         composable(Screen.AddTask.route) {
-            Text("إضافة مهمة — قريباً")
+            AddTaskScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.Finance.route) {
             Text("المالية — قريباً")
