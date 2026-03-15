@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:label="مدير الإنتاج"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat">
+        android:theme="@android:style/Theme.Light">
         <activity
             android:name=".MainActivity"
             android:exported="true"
