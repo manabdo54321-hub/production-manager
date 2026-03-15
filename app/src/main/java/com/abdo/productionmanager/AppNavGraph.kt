@@ -65,12 +65,6 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Screen.Finance.route) {
             Text("المالية — قريباً")
         }
-        composable(Screen.AddExpense.route) {
-            Text("إضافة مصروف — قريباً")
-        }
-        composable(Screen.AddIncome.route) {
-            Text("إضافة دخل — قريباً")
-        }
         composable(Screen.Analytics.route) {
             Text("التحليلات — قريباً")
         }
