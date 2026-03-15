@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.abdo.feature.production.ProductionEntryScreen
+import com.abdo.feature.production.ProductionHistoryScreen
+import com.abdo.feature.production.ProductsManagerScreen
 import androidx.compose.material3.Text
 
 @Composable
@@ -13,16 +16,38 @@ fun AppNavGraph(navController: NavHostController) {
         startDestination = Screen.Dashboard.route
     ) {
         composable(Screen.Dashboard.route) {
-            Text("Dashboard — قريباً")
+            DashboardScreen(
+                onNavigateToProductionEntry = {
+                    navController.navigate(Screen.ProductionEntry.route)
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Screen.ProductionHistory.route)
+                },
+                onNavigateToProducts = {
+                    navController.navigate(Screen.ProductsManager.route)
+                },
+                onNavigateToTasks = {
+                    navController.navigate(Screen.Tasks.route)
+                },
+                onNavigateToFinance = {
+                    navController.navigate(Screen.Finance.route)
+                }
+            )
         }
         composable(Screen.ProductionEntry.route) {
-            Text("تسجيل الإنتاج — قريباً")
+            ProductionEntryScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.ProductionHistory.route) {
-            Text("سجل الإنتاج — قريباً")
+            ProductionHistoryScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.ProductsManager.route) {
-            Text("إدارة المنتجات — قريباً")
+            ProductsManagerScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.Tasks.route) {
             Text("المهام — قريباً")
