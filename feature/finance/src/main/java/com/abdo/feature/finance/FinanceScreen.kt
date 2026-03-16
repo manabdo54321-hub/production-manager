@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,7 +21,6 @@ import com.abdo.core.domain.model.Expense
 import com.abdo.core.domain.model.ExpenseCategory
 import com.abdo.core.domain.model.Income
 import com.abdo.core.domain.model.IncomeCategory
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,16 +67,9 @@ fun FinanceScreen(
             }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // كارد الملخص المالي
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
@@ -114,8 +108,6 @@ fun FinanceScreen(
                     }
                 }
             }
-
-            // Tabs
             TabRow(selectedTabIndex = selectedTab) {
                 Tab(
                     selected = selectedTab == 0,
@@ -128,8 +120,6 @@ fun FinanceScreen(
                     text = { Text("المصاريف (${uiState.summary.expenses.size})") }
                 )
             }
-
-            // القوائم
             when (selectedTab) {
                 0 -> IncomeList(
                     incomes = uiState.summary.incomes,
@@ -147,9 +137,7 @@ fun FinanceScreen(
         AddExpenseDialog(
             onDismiss = { showAddExpense = false },
             onConfirm = { title, amount, category, notes ->
-                viewModel.onEvent(
-                    FinanceEvent.AddExpense(title, amount, category, notes)
-                )
+                viewModel.onEvent(FinanceEvent.AddExpense(title, amount, category, notes))
                 showAddExpense = false
             }
         )
@@ -159,9 +147,7 @@ fun FinanceScreen(
         AddIncomeDialog(
             onDismiss = { showAddIncome = false },
             onConfirm = { title, amount, category, notes ->
-                viewModel.onEvent(
-                    FinanceEvent.AddIncome(title, amount, category, notes)
-                )
+                viewModel.onEvent(FinanceEvent.AddIncome(title, amount, category, notes))
                 showAddIncome = false
             }
         )
@@ -188,7 +174,6 @@ fun FinanceStat(label: String, amount: Double, color: Color) {
 
 @Composable
 fun IncomeList(incomes: List<Income>, onDelete: (Income) -> Unit) {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM")
     if (incomes.isEmpty()) {
         EmptyFinanceState(message = "لا يوجد دخل هذا الشهر", icon = "💰")
     } else {
@@ -201,7 +186,7 @@ fun IncomeList(incomes: List<Income>, onDelete: (Income) -> Unit) {
                 FinanceItemCard(
                     title = income.title,
                     amount = income.amount,
-                    date = income.date.format(formatter),
+                    date = income.date.toString(),
                     categoryLabel = when (income.category) {
                         IncomeCategory.SALES -> "مبيعات"
                         IncomeCategory.ADVANCE -> "عربون"
@@ -219,7 +204,6 @@ fun IncomeList(incomes: List<Income>, onDelete: (Income) -> Unit) {
 
 @Composable
 fun ExpenseList(expenses: List<Expense>, onDelete: (Expense) -> Unit) {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM")
     if (expenses.isEmpty()) {
         EmptyFinanceState(message = "لا يوجد مصاريف هذا الشهر", icon = "🎉")
     } else {
@@ -232,7 +216,7 @@ fun ExpenseList(expenses: List<Expense>, onDelete: (Expense) -> Unit) {
                 FinanceItemCard(
                     title = expense.title,
                     amount = expense.amount,
-                    date = expense.date.format(formatter),
+                    date = expense.date.toString(),
                     categoryLabel = when (expense.category) {
                         ExpenseCategory.RAW_MATERIALS -> "خامات"
                         ExpenseCategory.TOOLS -> "أدوات"
@@ -270,9 +254,7 @@ fun FinanceItemCard(
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -301,18 +283,11 @@ fun FinanceItemCard(
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(
-                            text = categoryLabel,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                        Text(
-                            text = "• $date",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                    }
+                    Text(
+                        text = "$categoryLabel • $date",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
                 }
             }
             Row(
@@ -325,10 +300,7 @@ fun FinanceItemCard(
                     fontWeight = FontWeight.Bold,
                     color = amountColor
                 )
-                IconButton(
-                    onClick = { showDelete = true },
-                    modifier = Modifier.size(32.dp)
-                ) {
+                IconButton(onClick = { showDelete = true }, modifier = Modifier.size(32.dp)) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = "حذف",
@@ -362,10 +334,7 @@ fun FinanceItemCard(
 
 @Composable
 fun EmptyFinanceState(message: String, icon: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -380,6 +349,7 @@ fun EmptyFinanceState(message: String, icon: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpenseDialog(
     onDismiss: () -> Unit,
@@ -416,9 +386,7 @@ fun AddExpenseDialog(
                     value = amount,
                     onValueChange = { amount = it },
                     label = { Text("المبلغ (ج) *") },
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
-                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -474,6 +442,7 @@ fun AddExpenseDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddIncomeDialog(
     onDismiss: () -> Unit,
@@ -508,9 +477,7 @@ fun AddIncomeDialog(
                     value = amount,
                     onValueChange = { amount = it },
                     label = { Text("المبلغ (ج) *") },
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal
-                    ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -522,8 +489,8 @@ fun AddIncomeDialog(
                         value = categoryLabels[category] ?: "",
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("التصنيف") }
-     trailingIcon = {
+                        label = { Text("التصنيف") },
+                        trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
                         modifier = Modifier.fillMaxWidth().menuAnchor()
