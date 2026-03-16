@@ -61,7 +61,7 @@ fun FinanceScreen(
                     onClick = { showAddIncome = true },
                     containerColor = MaterialTheme.colorScheme.secondary
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "دخل",
+                    Icon(Icons.Default.Add, contentDescription = "دخل", tint = Color.White)
                 }
             }
         }
