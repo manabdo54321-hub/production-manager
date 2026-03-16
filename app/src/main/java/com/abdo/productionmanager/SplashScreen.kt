@@ -14,16 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-
     val alpha = remember { Animatable(0f) }
     val scale = remember { Animatable(0.7f) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        // Fade in + Scale up
-        launch {
+        scope.launch {
             alpha.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(800, easing = EaseOut)
@@ -37,7 +37,6 @@ fun SplashScreen(onFinished: () -> Unit) {
             )
         )
         delay(1200)
-        // Fade out
         alpha.animateTo(
             targetValue = 0f,
             animationSpec = tween(400)
@@ -58,11 +57,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 .alpha(alpha.value)
                 .scale(scale.value)
         ) {
-            // أيقونة التطبيق
-            Text(
-                text = "🧵",
-                fontSize = 80.sp
-            )
+            Text(text = "🧵", fontSize = 80.sp)
             Text(
                 text = "مدير الإنتاج",
                 style = MaterialTheme.typography.headlineLarge,
