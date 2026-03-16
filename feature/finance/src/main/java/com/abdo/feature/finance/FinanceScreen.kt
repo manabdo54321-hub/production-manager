@@ -70,65 +70,30 @@ fun FinanceScreen(
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "الملخص المالي الشهري",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    Text("الملخص المالي الشهري", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+                        FinanceStat("الدخل", uiState.summary.totalIncome, MaterialTheme.colorScheme.secondary)
+                        FinanceStat("المصاريف", uiState.summary.totalExpense, MaterialTheme.colorScheme.error)
                         FinanceStat(
-                            label = "الدخل",
-                            amount = uiState.summary.totalIncome,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                        FinanceStat(
-                            label = "المصاريف",
-                            amount = uiState.summary.totalExpense,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        FinanceStat(
-                            label = "صافي الربح",
-                            amount = uiState.summary.netProfit,
-                            color = if (uiState.summary.netProfit >= 0)
-                                MaterialTheme.colorScheme.secondary
-                            else
-                                MaterialTheme.colorScheme.error
+                            "صافي الربح",
+                            uiState.summary.netProfit,
+                            if (uiState.summary.netProfit >= 0) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                         )
                     }
                 }
             }
             TabRow(selectedTabIndex = selectedTab) {
-                Tab(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    text = { Text("الدخل (${uiState.summary.incomes.size})") }
-                )
-                Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    text = { Text("المصاريف (${uiState.summary.expenses.size})") }
-                )
+                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("الدخل (${uiState.summary.incomes.size})") })
+                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("المصاريف (${uiState.summary.expenses.size})") })
             }
             when (selectedTab) {
-                0 -> IncomeList(
-                    incomes = uiState.summary.incomes,
-                    onDelete = { viewModel.onEvent(FinanceEvent.DeleteIncome(it)) }
-                )
-                1 -> ExpenseList(
-                    expenses = uiState.summary.expenses,
-                    onDelete = { viewModel.onEvent(FinanceEvent.DeleteExpense(it)) }
-                )
+                0 -> IncomeList(uiState.summary.incomes) { viewModel.onEvent(FinanceEvent.DeleteIncome(it)) }
+                1 -> ExpenseList(uiState.summary.expenses) { viewModel.onEvent(FinanceEvent.DeleteExpense(it)) }
             }
         }
     }
@@ -136,52 +101,31 @@ fun FinanceScreen(
     if (showAddExpense) {
         AddExpenseDialog(
             onDismiss = { showAddExpense = false },
-            onConfirm = { title, amount, category, notes ->
-                viewModel.onEvent(FinanceEvent.AddExpense(title, amount, category, notes))
-                showAddExpense = false
-            }
+            onConfirm = { t, a, c, n -> viewModel.onEvent(FinanceEvent.AddExpense(t, a, c, n)); showAddExpense = false }
         )
     }
-
     if (showAddIncome) {
         AddIncomeDialog(
             onDismiss = { showAddIncome = false },
-            onConfirm = { title, amount, category, notes ->
-                viewModel.onEvent(FinanceEvent.AddIncome(title, amount, category, notes))
-                showAddIncome = false
-            }
+            onConfirm = { t, a, c, n -> viewModel.onEvent(FinanceEvent.AddIncome(t, a, c, n)); showAddIncome = false }
         )
     }
 }
 
 @Composable
-fun FinanceStat(label: String, amount: Double, color: Color) {
+fun FinanceStat(label: String, amount: Double, color: androidx.compose.ui.graphics.Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "${String.format("%.0f", amount)} ج",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = color,
-            fontSize = 18.sp
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        Text("${String.format("%.0f", amount)} ج", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = color, fontSize = 18.sp)
+        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
 
 @Composable
 fun IncomeList(incomes: List<Income>, onDelete: (Income) -> Unit) {
     if (incomes.isEmpty()) {
-        EmptyFinanceState(message = "لا يوجد دخل هذا الشهر", icon = "💰")
+        EmptyFinanceState("لا يوجد دخل هذا الشهر", "💰")
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(incomes) { income ->
                 FinanceItemCard(
                     title = income.title,
@@ -205,13 +149,9 @@ fun IncomeList(incomes: List<Income>, onDelete: (Income) -> Unit) {
 @Composable
 fun ExpenseList(expenses: List<Expense>, onDelete: (Expense) -> Unit) {
     if (expenses.isEmpty()) {
-        EmptyFinanceState(message = "لا يوجد مصاريف هذا الشهر", icon = "🎉")
+        EmptyFinanceState("لا يوجد مصاريف هذا الشهر", "🎉")
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(expenses) { expense ->
                 FinanceItemCard(
                     title = expense.title,
@@ -235,99 +175,39 @@ fun ExpenseList(expenses: List<Expense>, onDelete: (Expense) -> Unit) {
 }
 
 @Composable
-fun FinanceItemCard(
-    title: String,
-    amount: Double,
-    date: String,
-    categoryLabel: String,
-    isIncome: Boolean,
-    onDelete: () -> Unit
-) {
+fun FinanceItemCard(title: String, amount: Double, date: String, categoryLabel: String, isIncome: Boolean, onDelete: () -> Unit) {
     var showDelete by remember { mutableStateOf(false) }
-    val amountColor = if (isIncome)
-        MaterialTheme.colorScheme.secondary
-    else
-        MaterialTheme.colorScheme.error
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = amountColor.copy(alpha = 0.1f),
-                    modifier = Modifier.size(44.dp)
-                ) {
+    val amountColor = if (isIncome) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
+    Card(modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(2.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                Surface(shape = RoundedCornerShape(8.dp), color = amountColor.copy(alpha = 0.1f), modifier = Modifier.size(44.dp)) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = if (isIncome) "+" else "-",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = amountColor
-                        )
+                        Text(if (isIncome) "+" else "-", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = amountColor)
                     }
                 }
                 Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "$categoryLabel • $date",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
+                    Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Text("$categoryLabel • $date", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
                 }
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "${String.format("%.0f", amount)} ج",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = amountColor
-                )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("${String.format("%.0f", amount)} ج", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = amountColor)
                 IconButton(onClick = { showDelete = true }, modifier = Modifier.size(32.dp)) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "حذف",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(18.dp)
-                    )
+                    Icon(Icons.Default.Delete, contentDescription = "حذف", tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(18.dp))
                 }
             }
         }
     }
-
     if (showDelete) {
         AlertDialog(
             onDismissRequest = { showDelete = false },
             title = { Text("حذف") },
             text = { Text("هل أنت متأكد من حذف \"$title\"؟") },
             confirmButton = {
-                Button(
-                    onClick = { onDelete(); showDelete = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) { Text("حذف") }
+                Button(onClick = { onDelete(); showDelete = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text("حذف") }
             },
-            dismissButton = {
-                TextButton(onClick = { showDelete = false }) { Text("إلغاء") }
-            }
+            dismissButton = { TextButton(onClick = { showDelete = false }) { Text("إلغاء") } }
         )
     }
 }
@@ -335,200 +215,73 @@ fun FinanceItemCard(
 @Composable
 fun EmptyFinanceState(message: String, icon: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(text = icon, fontSize = 60.sp)
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.outline
-            )
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(icon, fontSize = 60.sp)
+            Text(message, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.outline)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddExpenseDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, Double, ExpenseCategory, String) -> Unit
-) {
+fun AddExpenseDialog(onDismiss: () -> Unit, onConfirm: (String, Double, ExpenseCategory, String) -> Unit) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf(ExpenseCategory.OTHER) }
     var notes by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-
-    val categoryLabels = mapOf(
-        ExpenseCategory.RAW_MATERIALS to "خامات",
-        ExpenseCategory.TOOLS to "أدوات",
-        ExpenseCategory.MAINTENANCE to "صيانة",
-        ExpenseCategory.SALARY to "رواتب",
-        ExpenseCategory.UTILITIES to "مرافق",
-        ExpenseCategory.OTHER to "أخرى"
-    )
-
+    val categoryLabels = mapOf(ExpenseCategory.RAW_MATERIALS to "خامات", ExpenseCategory.TOOLS to "أدوات", ExpenseCategory.MAINTENANCE to "صيانة", ExpenseCategory.SALARY to "رواتب", ExpenseCategory.UTILITIES to "مرافق", ExpenseCategory.OTHER to "أخرى")
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("إضافة مصروف", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("العنوان *") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    label = { Text("المبلغ (ج) *") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = categoryLabels[category] ?: "",
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("التصنيف") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-                        modifier = Modifier.fillMaxWidth().menuAnchor()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        categoryLabels.forEach { (cat, label) ->
-                            DropdownMenuItem(
-                                text = { Text(label) },
-                                onClick = { category = cat; expanded = false }
-                            )
-                        }
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("العنوان *") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                OutlinedTextField(value = amount, onValueChange = { amount = it }, label = { Text("المبلغ (ج) *") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true)
+                ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+                    OutlinedTextField(value = categoryLabels[category] ?: "", onValueChange = {}, readOnly = true, label = { Text("التصنيف") }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }, modifier = Modifier.fillMaxWidth().menuAnchor())
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        categoryLabels.forEach { (cat, label) -> DropdownMenuItem(text = { Text(label) }, onClick = { category = cat; expanded = false }) }
                     }
                 }
-                OutlinedTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = { Text("ملاحظات") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("ملاحظات") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(title, amount.toDoubleOrNull() ?: 0.0, category, notes)
-                },
-                enabled = title.isNotBlank() && (amount.toDoubleOrNull() ?: 0.0) > 0,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
-                )
-            ) { Text("إضافة") }
+            Button(onClick = { onConfirm(title, amount.toDoubleOrNull() ?: 0.0, category, notes) }, enabled = title.isNotBlank() && (amount.toDoubleOrNull() ?: 0.0) > 0, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text("إضافة") }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("إلغاء") }
-        }
+        dismissButton = { TextButton(onClick = onDismiss) { Text("إلغاء") } }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddIncomeDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, Double, IncomeCategory, String) -> Unit
-) {
+fun AddIncomeDialog(onDismiss: () -> Unit, onConfirm: (String, Double, IncomeCategory, String) -> Unit) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf(IncomeCategory.SALES) }
     var notes by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-
-    val categoryLabels = mapOf(
-        IncomeCategory.SALES to "مبيعات",
-        IncomeCategory.ADVANCE to "عربون",
-        IncomeCategory.BONUS to "مكافأة",
-        IncomeCategory.OTHER to "أخرى"
-    )
-
+    val categoryLabels = mapOf(IncomeCategory.SALES to "مبيعات", IncomeCategory.ADVANCE to "عربون", IncomeCategory.BONUS to "مكافأة", IncomeCategory.OTHER to "أخرى")
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("إضافة دخل", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("العنوان *") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    label = { Text("المبلغ (ج) *") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it }
-                ) {
-                    OutlinedTextField(
-                        value = categoryLabels[category] ?: "",
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("التصنيف") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-                        modifier = Modifier.fillMaxWidth().menuAnchor()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        categoryLabels.forEach { (cat, label) ->
-                            DropdownMenuItem(
-                                text = { Text(label) },
-                                onClick = { category = cat; expanded = false }
-                            )
-                        }
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("العنوان *") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                OutlinedTextField(value = amount, onValueChange = { amount = it }, label = { Text("المبلغ (ج) *") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth(), singleLine = true)
+                ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+                    OutlinedTextField(value = categoryLabels[category] ?: "", onValueChange = {}, readOnly = true, label = { Text("التصنيف") }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }, modifier = Modifier.fillMaxWidth().menuAnchor())
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        categoryLabels.forEach { (cat, label) -> DropdownMenuItem(text = { Text(label) }, onClick = { category = cat; expanded = false }) }
                     }
                 }
-                OutlinedTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = { Text("ملاحظات") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                OutlinedTextField(value = notes, onValueChange = { notes = it }, label = { Text("ملاحظات") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             }
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm(title, amount.toDoubleOrNull() ?: 0.0, category, notes)
-                },
-                enabled = title.isNotBlank() && (amount.toDoubleOrNull() ?: 0.0) > 0,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
-            ) { Text("إضافة") }
+            Button(onClick = { onConfirm(title, amount.toDoubleOrNull() ?: 0.0, category, notes) }, enabled = title.isNotBlank() && (amount.toDoubleOrNull() ?: 0.0) > 0, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) { Text("إضافة") }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("إلغاء") }
-        }
+        dismissButton = { TextButton(onClick = onDismiss) { Text("إلغاء") } }
     )
 }
