@@ -55,15 +55,13 @@ fun FinanceScreen(
                     containerColor = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(48.dp)
                 ) {
-                    Icon(Icons.Default.Remove, contentDescription = "مصروف",
-                        tint = Color.White)
+                    Icon(Icons.Default.Remove, contentDescription = "مصروف", tint = Color.White)
                 }
                 FloatingActionButton(
                     onClick = { showAddIncome = true },
                     containerColor = MaterialTheme.colorScheme.secondary
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "دخل",
-                        tint = Color.White)
                 }
             }
         }
