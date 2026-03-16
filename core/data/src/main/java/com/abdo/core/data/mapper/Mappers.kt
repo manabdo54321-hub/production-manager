@@ -64,3 +64,50 @@ fun Task.toEntity() = TaskEntity(
     dueDate = dueDate,
     createdAt = createdAt
 )
+
+// Expense
+import com.abdo.core.data.entity.ExpenseEntity
+import com.abdo.core.data.entity.IncomeEntity
+import com.abdo.core.domain.model.Expense
+import com.abdo.core.domain.model.ExpenseCategory
+import com.abdo.core.domain.model.Income
+import com.abdo.core.domain.model.IncomeCategory
+
+fun ExpenseEntity.toDomain() = Expense(
+    id = id,
+    title = title,
+    amount = amount,
+    category = ExpenseCategory.valueOf(category),
+    date = date,
+    notes = notes
+)
+
+fun Expense.toEntity() = ExpenseEntity(
+    id = id,
+    title = title,
+    amount = amount,
+    category = category.name,
+    date = date,
+    notes = notes
+)
+
+fun IncomeEntity.toDomain(productName: String = "") = Income(
+    id = id,
+    title = title,
+    amount = amount,
+    category = IncomeCategory.valueOf(category),
+    productId = productId,
+    productName = productName,
+    date = date,
+    notes = notes
+)
+
+fun Income.toEntity() = IncomeEntity(
+    id = id,
+    title = title,
+    amount = amount,
+    category = category.name,
+    productId = productId,
+    date = date,
+    notes = notes
+)

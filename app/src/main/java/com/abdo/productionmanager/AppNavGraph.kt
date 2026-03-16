@@ -2,18 +2,19 @@ package com.abdo.productionmanager
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.abdo.feature.finance.FinanceScreen
 import com.abdo.feature.production.ProductionEntryScreen
 import com.abdo.feature.production.ProductionHistoryScreen
 import com.abdo.feature.production.ProductsManagerScreen
 import com.abdo.feature.tasks.AddTaskScreen
 import com.abdo.feature.tasks.TasksScreen
 import com.abdo.productionmanager.settings.SettingsScreen
+import androidx.compose.material3.Text
 
 @Composable
 fun AppNavGraph(
@@ -45,19 +46,13 @@ fun AppNavGraph(
             )
         }
         composable(Screen.ProductionEntry.route) {
-            ProductionEntryScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            ProductionEntryScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(Screen.ProductionHistory.route) {
-            ProductionHistoryScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            ProductionHistoryScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(Screen.ProductsManager.route) {
-            ProductsManagerScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            ProductsManagerScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(Screen.Tasks.route) {
             TasksScreen(
@@ -66,20 +61,16 @@ fun AppNavGraph(
             )
         }
         composable(Screen.AddTask.route) {
-            AddTaskScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            AddTaskScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(Screen.Finance.route) {
-            Text("المالية — قريباً")
+            FinanceScreen(onNavigateBack = { navController.popBackStack() })
         }
         composable(Screen.Analytics.route) {
-            Text("التحليلات — قريباً")
+            Text("التقارير — قريباً")
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            SettingsScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
