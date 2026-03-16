@@ -13,6 +13,7 @@ import com.abdo.feature.production.ProductionHistoryScreen
 import com.abdo.feature.production.ProductsManagerScreen
 import com.abdo.feature.tasks.AddTaskScreen
 import com.abdo.feature.tasks.TasksScreen
+import com.abdo.productionmanager.settings.SettingsScreen
 
 @Composable
 fun AppNavGraph(
@@ -76,7 +77,9 @@ fun AppNavGraph(
             Text("التحليلات — قريباً")
         }
         composable(Screen.Settings.route) {
-            Text("الإعدادات — قريباً")
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }
