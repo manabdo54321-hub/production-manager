@@ -113,7 +113,7 @@ fun FinanceScreen(
 }
 
 @Composable
-fun FinanceStat(label: String, amount: Double, color: androidx.compose.ui.graphics.Color) {
+fun FinanceStat(label: String, amount: Double, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("${String.format("%.0f", amount)} ج", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = color, fontSize = 18.sp)
         Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer)
